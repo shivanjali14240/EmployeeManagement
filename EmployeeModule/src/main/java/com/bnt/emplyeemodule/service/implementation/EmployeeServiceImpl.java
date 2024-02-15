@@ -6,12 +6,11 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.bnt.emplyeemodule.dto.EmployeeDto;
 import com.bnt.emplyeemodule.entity.Employee;
 import com.bnt.emplyeemodule.exception.EmployeeNotFoundException;
 import com.bnt.emplyeemodule.repository.EmployeeRepo;
 import com.bnt.emplyeemodule.service.EmployeeService;
-import com.entity.TestManagement;
-import com.repository.TestRepository;
 
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
@@ -19,26 +18,24 @@ public class EmployeeServiceImpl implements EmployeeService {
 	@Autowired
 	private EmployeeRepo employeeRepository;
 
-	@Autowired
-	private TestRepository testManagementRepository;
-
-	public List<TestManagement> getAvailableTests(Long employeeId) {
-		Optional<Employee> employee = getEmployeeById(employeeId);
-		return employee.get().getTests();
+	@Override
+	public Employee register(EmployeeDto employeeDto) {
+		Employee employee = new Employee();
+		employee.setFirstName(employeeDto.getFirstName());
+		employee.setLastName(employeeDto.getLastName());
+		employee.setEmail(employeeDto.getEmail());
+		employee.setPassword(employeeDto.getPassword());
+		return employeeRepository.save(employee);
 	}
 
-	public void takeTest(Long employeeId, Long testId) {
-		Optional<Employee> employee = getEmployeeById(employeeId);
-		TestManagement test = getTestById(testId);
-		List<TestManagement> testsTaken = employee.get().getTests();
-		testsTaken.add(test);
-		employee.orElseThrow().setTests(testsTaken);
-		employeeRepository.save(employee);
-	}
-
-	private TestManagement getTestById(Long testId) {
-		Optional<TestManagement> testOptional = testManagementRepository.findById(testId);
-		return testOptional.orElseThrow(() -> new IllegalArgumentException("Test not found with ID: " + testId));
+	@Override
+	public Employee login(String email, String password) {
+		Employee employee = employeeRepository.findByEmail(email);
+		if (employee != null && employee.getPassword().equals(password)) {
+			return employee;
+		} else {
+			return null;
+		}
 	}
 
 	public List<Employee> getAllEmployees() {

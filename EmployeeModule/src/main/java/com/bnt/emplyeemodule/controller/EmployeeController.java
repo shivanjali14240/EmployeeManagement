@@ -16,10 +16,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.bnt.emplyeemodule.dto.EmployeeDto;
 import com.bnt.emplyeemodule.entity.Employee;
 import com.bnt.emplyeemodule.exception.EmployeeNotFoundException;
 import com.bnt.emplyeemodule.service.EmployeeService;
-import com.entity.TestManagement;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -29,6 +29,40 @@ import lombok.extern.slf4j.Slf4j;
 public class EmployeeController {
 	@Autowired
 	private EmployeeService employeeService;
+
+	@PostMapping("/register")
+	public ResponseEntity<String> registerEmployee(@RequestBody EmployeeDto employeeDto) {
+		log.info("Received registration request for employee: {}", employeeDto.getEmail());
+
+		Employee existingEmployee = employeeService.login(employeeDto.getEmail(), employeeDto.getPassword());
+		if (existingEmployee != null) {
+			log.warn("Registration failed: Employee with email {} already exists.", employeeDto.getEmail());
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Employee with this email already exists.");
+
+		}
+
+		Employee registeredEmployee = employeeService.register(employeeDto);
+		if (registeredEmployee != null) {
+			log.info("Employee registered successfully: {}", registeredEmployee);
+			return ResponseEntity.ok("Employee registered successfully.");
+		} else {
+			log.error("Failed to register employee.");
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to register employee.");
+		}
+	}
+
+	@PostMapping("/login")
+	public ResponseEntity<?> loginEmployee(@RequestBody EmployeeDto employeeDto) {
+		log.info("Received login request for employee: {}", employeeDto.getEmail());
+		Employee employee = employeeService.login(employeeDto.getEmail(), employeeDto.getPassword());
+		if (employee != null) {
+			log.info("Login successful for employee: {}", employee.getEmail());
+			return ResponseEntity.ok(employee);
+		} else {
+			log.warn("Login failed for email: {}", employeeDto.getEmail());
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid email or password.");
+		}
+	}
 
 	@GetMapping
 	public ResponseEntity<List<Employee>> getAllEmployees() {
@@ -72,18 +106,6 @@ public class EmployeeController {
 		employeeService.deleteEmployee(id);
 		log.info("Employee with ID: {} deleted", id);
 		return ResponseEntity.ok("Employee deleted successfully");
-	}
-
-	@GetMapping("/{employeeId}/tests")
-	public ResponseEntity<List<TestManagement>> getAvailableTests(@PathVariable Long employeeId) {
-		List<TestManagement> tests = employeeService.getAvailableTests(employeeId);
-		return ResponseEntity.ok(tests);
-	}
-
-	@PostMapping("/{employeeId}/tests/{testId}")
-	public ResponseEntity<String> takeTest(@PathVariable Long employeeId, @PathVariable Long testId) {
-		employeeService.takeTest(employeeId, testId);
-		return ResponseEntity.ok("Test taken successfully");
 	}
 
 	@ExceptionHandler(EmployeeNotFoundException.class)

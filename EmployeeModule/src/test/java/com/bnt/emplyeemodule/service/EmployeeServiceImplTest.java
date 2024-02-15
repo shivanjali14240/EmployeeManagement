@@ -39,8 +39,8 @@ public class EmployeeServiceImplTest {
 
 	@BeforeEach
 	public void setUp() {
-		employee1 = new Employee(1L, "shiv", " shinde", "shiv@example.com", "shiva", null);
-		employee2 = new Employee(2L, "shivanya", "sawant", "shivanya@example.com", "shivnya", null);
+		employee1 = new Employee(1L, "shiv", " shinde", "shiv@example.com", "shiva");
+		employee2 = new Employee(2L, "shivanya", "sawant", "shivanya@example.com", "shivnya");
 	}
 
 	@Test

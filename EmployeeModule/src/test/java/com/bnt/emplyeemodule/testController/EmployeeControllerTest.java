@@ -32,8 +32,8 @@ public class EmployeeControllerTest {
 	@Test
 	void testGetAllEmployees_PositiveCase() {
 		List<Employee> employees = new ArrayList<>();
-		employees.add(new Employee(1L, "shiv", "shinde", "shiv@example.com", "shiv@12", null));
-		employees.add(new Employee(2L, "shivanya", "Sawant", "shivanya@example.com", "shivnya@23", null));
+		employees.add(new Employee(1L, "shiv", "shinde", "shiv@example.com", "shiv@12"));
+		employees.add(new Employee(2L, "shivanya", "Sawant", "shivanya@example.com", "shivnya@23"));
 		when(employeeService.getAllEmployees()).thenReturn(employees);
 		ResponseEntity<List<Employee>> response = employeeController.getAllEmployees();
 		assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -43,7 +43,7 @@ public class EmployeeControllerTest {
 	@Test
 	void testGetEmployeeById_PositiveCase() {
 		Long id = 1L;
-		Employee employee = new Employee(1L, "shiv", "shinde", "shiv@example.com", "shiv@12", null);
+		Employee employee = new Employee(1L, "shiv", "shinde", "shiv@example.com", "shiv@12");
 		when(employeeService.getEmployeeById(id)).thenReturn(Optional.of(employee));
 		ResponseEntity<Employee> response = employeeController.getEmployeeById(id);
 		assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -62,7 +62,7 @@ public class EmployeeControllerTest {
 
 	@Test
 	void testCreateEmployee_PositiveCase() {
-		Employee employee = new Employee(1L, "shiv", "shinde", "shiv@example.com", "shiv@12", null);
+		Employee employee = new Employee(1L, "shiv", "shinde", "shiv@example.com", "shiv@12");
 		when(employeeService.createEmployee(employee)).thenReturn(employee);
 		ResponseEntity<Employee> response = employeeController.createEmployee(employee);
 		assertEquals(HttpStatus.CREATED, response.getStatusCode());
@@ -72,8 +72,8 @@ public class EmployeeControllerTest {
 	@Test
 	void testUpdateEmployee_PositiveCase() {
 		Long id = 1L;
-		Employee existingEmployee = new Employee(1L, "shiv", "shinde", "shiv@example.com", "shiv@12", null);
-		Employee updatedEmployeeData = new Employee(2L, "shivanya", "Sawant", "shivanya@example.com", "shivnya@23", null);
+		Employee existingEmployee = new Employee(1L, "shiv", "shinde", "shiv@example.com", "shiv@12");
+		Employee updatedEmployeeData = new Employee(2L, "shivanya", "Sawant", "shivanya@example.com", "shivnya@23");
 		when(employeeService.updateEmployee(id, updatedEmployeeData)).thenReturn(updatedEmployeeData);
 		ResponseEntity<Employee> response = employeeController.updateEmployee(id, updatedEmployeeData);
 		assertEquals(HttpStatus.OK, response.getStatusCode());
