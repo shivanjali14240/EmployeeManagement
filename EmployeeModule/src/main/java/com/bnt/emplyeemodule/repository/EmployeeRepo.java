@@ -12,6 +12,6 @@ public interface EmployeeRepo extends JpaRepository<Employee, Long> {
 
 	Employee findByEmail(String email);
 
-	void save(Optional<Employee> employee);
+	Employee save(Optional<Employee> employee);
 
 }

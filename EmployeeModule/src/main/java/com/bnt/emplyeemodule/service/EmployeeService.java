@@ -16,8 +16,12 @@ public interface EmployeeService {
 	Employee updateEmployee(Long id, Employee newEmployeeData);
 
 	void deleteEmployee(Long id);
-	
+
 	Employee register(EmployeeDto employeeDto);
 
 	Employee login(String email, String password);
+	
+	void takeTest(Long employeeId, Long testId);
+
+
 }

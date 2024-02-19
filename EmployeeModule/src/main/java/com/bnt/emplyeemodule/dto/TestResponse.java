@@ -11,11 +11,17 @@ import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class EmployeeDto {
-	private Long employeeId;
-	private String firstName;
-	private String lastName;
-	private String email;
-	private String password;
+public class TestResponse {
+	private Long testId;
+
+	private String title;
+
+	private String description;
+
+	private int maxMarks;
+
+	private int numberofQuestions;
+
+	private boolean active = false;
 
 }

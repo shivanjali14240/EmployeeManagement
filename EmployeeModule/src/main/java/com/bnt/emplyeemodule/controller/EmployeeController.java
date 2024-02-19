@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.bnt.emplyeemodule.dto.EmployeeDto;
@@ -27,6 +28,7 @@ import lombok.extern.slf4j.Slf4j;
 @RestController
 @RequestMapping("/employeeModule/api/v1/employee")
 public class EmployeeController {
+
 	@Autowired
 	private EmployeeService employeeService;
 
@@ -86,7 +88,7 @@ public class EmployeeController {
 
 	@PostMapping
 	public ResponseEntity<Employee> createEmployee(@RequestBody Employee employee) {
-		log.info("Request received to create employee");
+		log.info("Request received to create employee", employee);
 		Employee createdEmployee = employeeService.createEmployee(employee);
 		log.info("Employee created with ID: {}", createdEmployee);
 		return ResponseEntity.status(HttpStatus.CREATED).body(createdEmployee);
@@ -106,6 +108,16 @@ public class EmployeeController {
 		employeeService.deleteEmployee(id);
 		log.info("Employee with ID: {} deleted", id);
 		return ResponseEntity.ok("Employee deleted successfully");
+	}
+
+	@PostMapping("/{employeeId}/{testId}")
+	public ResponseEntity<String> takeTest(@PathVariable Long employeeId, @PathVariable Long testId) {
+		try {
+			employeeService.takeTest(employeeId, testId);
+			return ResponseEntity.ok("Test taken successfully");
+		} catch (RuntimeException e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+		}
 	}
 
 	@ExceptionHandler(EmployeeNotFoundException.class)
