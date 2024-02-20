@@ -14,13 +14,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.bnt.emplyeemodule.dto.EmployeeDto;
+import com.bnt.emplyeemodule.dto.EmployeeTestDetails;
 import com.bnt.emplyeemodule.entity.Employee;
 import com.bnt.emplyeemodule.exception.EmployeeNotFoundException;
 import com.bnt.emplyeemodule.service.EmployeeService;
+import com.bnt.emplyeemodule.service.implementation.EmployeeTestResultServiceImpl;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -31,6 +32,9 @@ public class EmployeeController {
 
 	@Autowired
 	private EmployeeService employeeService;
+
+	@Autowired
+	private EmployeeTestResultServiceImpl employeeTestResultService;
 
 	@PostMapping("/register")
 	public ResponseEntity<String> registerEmployee(@RequestBody EmployeeDto employeeDto) {
@@ -114,9 +118,25 @@ public class EmployeeController {
 	public ResponseEntity<String> takeTest(@PathVariable Long employeeId, @PathVariable Long testId) {
 		try {
 			employeeService.takeTest(employeeId, testId);
+			log.info("Request received to testmanagement with test id: {}", testId);
 			return ResponseEntity.ok("Test taken successfully");
 		} catch (RuntimeException e) {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+		}
+	}
+
+	@GetMapping("/{employeeId}/testResult")
+	public ResponseEntity<?> getTestResultsByEmployeeId(@PathVariable Long employeeId) {
+		try {
+			EmployeeTestDetails employeeTestDetails = employeeTestResultService.getTestResultsByEmployeeId(employeeId);
+			if (employeeTestDetails == null) {
+				return new ResponseEntity<>("Employee not found", HttpStatus.NOT_FOUND);
+			}
+			log.info("get test result by employee id: {}", employeeTestDetails);
+			return new ResponseEntity<>(employeeTestDetails, HttpStatus.OK);
+		} catch (Exception e) {
+			log.error("An unexpected error occurred: {}", e.getMessage());
+			return new ResponseEntity<>("An error occurred: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 

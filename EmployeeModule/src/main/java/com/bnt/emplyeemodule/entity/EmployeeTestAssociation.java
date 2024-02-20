@@ -18,7 +18,6 @@ public class EmployeeTestAssociation {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-
 	private Long employeeId;
 	private Long testId;
 }
